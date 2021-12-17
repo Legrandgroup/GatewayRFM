@@ -1385,7 +1385,7 @@ void setup()
   wm.setAPCallback(configModeCallback);
   wm.setSaveConfigCallback(saveConfigCallback);
   wm.setMinimumSignalQuality(10);
-  wm.setConfigPortalTimeout(360);
+  wm.setConfigPortalTimeout(10);
   wm.setClass("invert"); // dark theme
 
   if (digitalRead(TRIGGER_PIN) == LOW) {
@@ -1491,19 +1491,27 @@ void loop()
     
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_CENTER);
+    /*
     if (!mqttactive) {
       info_config = "mqtt non configuré";
     }
     display.drawString(64, 53, info_config);
+    */
 
     display.setFont(ArialMT_Plain_16); 
-    display.drawString(64, 30, String(teleinfo.SINSTS) + " VA");
+    if (teleinfo.SINSTI>0) {
+      display.drawString(64, 30, String('-') + String(teleinfo.SINSTI) + " VA");
+    }
+    else if (teleinfo.SINSTS>0) {
+      display.drawString(64, 30, String(teleinfo.SINSTS) + " VA");
+    }
     
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.drawString(1, 1, WiFi.localIP().toString());
-    display.drawString(2, 15, String(Nb_rcv) + " / " + String(Nb_sent));
-        
+    display.drawString(2, 15, String(Nb_rcv) + "(" + String(Step) + ") / " + String(Nb_sent));
+    display.drawString(1, 53, String("LoRa RSSI: ") + String(lora_rssi) + String("dBm"));
+
     draw_rssi();
 
     display.display();
